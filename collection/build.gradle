@@ -1,0 +1,8 @@
+apply plugin: 'java-library'
+apply plugin: 'maven'
+
+group='com.github.grishka'
+
+dependencies {
+	api project(':annotation')
+}

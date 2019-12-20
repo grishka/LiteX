@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.grishka'
+
+android {
+	compileSdkVersion 29
+	buildToolsVersion "29.0.2"
+	defaultConfig {
+		minSdkVersion 21
+		targetSdkVersion 29
+		versionCode 1
+		versionName "1.0"
+	}
+	buildTypes {
+		release {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
+}
+
+dependencies {
+	api project(':annotation')
+	api project(':recyclerview')
+	implementation project(':collection')
+}

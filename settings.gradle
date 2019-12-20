@@ -1,0 +1,8 @@
+include ':annotation'
+include ':collection'
+include ':customtabs'
+include ':drawerlayout'
+include ':recyclerview'
+include ':swiperefreshlayout'
+include ':viewpager'
+include ':viewpager2'
