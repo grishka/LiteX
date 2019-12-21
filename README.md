@@ -22,7 +22,7 @@ Add JitPack to your root `build.gradle`:
 Add the libraries you need to the `dependencies` section in your app project `build.gradle`:
 
     api 'com.github.grishka.litex:annotation:1.0'
-    compile 'com.github.grishka.litex:recyclerview:1.0'
-    compile 'com.github.grishka.litex:drawerlayout:1.0'
+    implementation 'com.github.grishka.litex:recyclerview:1.0'
+    implementation 'com.github.grishka.litex:drawerlayout:1.0'
 
 I won't recommend using both LiteX and AndroidX in the same project. It would probably work at the end, but you'll most likely have some conflict resolution to do.
