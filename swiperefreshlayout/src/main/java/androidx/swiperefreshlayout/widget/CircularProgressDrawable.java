@@ -44,6 +44,7 @@ import androidx.annotation.RestrictTo;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Objects;
 
 /**
  * Drawable that renders the animated indeterminate progress indicator in the Material design style
@@ -135,7 +136,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
      * @param context application context
      */
     public CircularProgressDrawable(@NonNull Context context) {
-        mResources = context.getResources();
+        mResources = Objects.requireNonNull(context).getResources();
 
         mRing = new Ring();
         mRing.setColors(COLORS);
@@ -424,6 +425,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         mRotation = rotation;
     }
 
+    @SuppressWarnings("UnusedMethod") // TODO(b/141954576): Suppressed during upgrade to AGP 3.6.
     private float getRotation() {
         return mRotation;
     }
@@ -654,7 +656,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
             mPaint.setAntiAlias(true);
             mPaint.setStyle(Style.STROKE);
 
-            mArrowPaint.setStyle(Style.FILL);
+            mArrowPaint.setStyle(Paint.Style.FILL);
             mArrowPaint.setAntiAlias(true);
 
             mCirclePaint.setColor(Color.TRANSPARENT);
@@ -725,8 +727,8 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         void drawTriangle(Canvas c, float startAngle, float sweepAngle, RectF bounds) {
             if (mShowArrow) {
                 if (mArrow == null) {
-                    mArrow = new Path();
-                    mArrow.setFillType(Path.FillType.EVEN_ODD);
+                    mArrow = new android.graphics.Path();
+                    mArrow.setFillType(android.graphics.Path.FillType.EVEN_ODD);
                 } else {
                     mArrow.reset();
                 }
@@ -808,7 +810,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         }
 
         int getNextColorIndex() {
-            return (mColorIndex + 1) % (mColors.length);
+            return (mColorIndex + 1) % mColors.length;
         }
 
         /**

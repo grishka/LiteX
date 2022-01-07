@@ -698,7 +698,7 @@ public class SortedList<T> {
      * @param index The index of the item to retrieve.
      *
      * @return The item at the given index.
-     * @throws IndexOutOfBoundsException if provided index is negative or larger than the
+     * @throws java.lang.IndexOutOfBoundsException if provided index is negative or larger than the
      *                                             size of the list.
      */
     public T get(int index) throws IndexOutOfBoundsException {
@@ -840,7 +840,7 @@ public class SortedList<T> {
     public static abstract class Callback<T2> implements Comparator<T2>, ListUpdateCallback {
 
         /**
-         * Similar to {@link Comparator#compare(Object, Object)}, should compare two and
+         * Similar to {@link java.util.Comparator#compare(Object, Object)}, should compare two and
          * return how they should be ordered.
          *
          * @param o1 The first object to compare.

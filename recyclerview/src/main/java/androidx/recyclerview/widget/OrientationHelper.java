@@ -86,7 +86,7 @@ public abstract class OrientationHelper {
      *
      * @param view The view element to check
      * @return The first pixel of the element
-     * @see #getDecoratedEnd(View)
+     * @see #getDecoratedEnd(android.view.View)
      */
     public abstract int getDecoratedStart(View view);
 
@@ -98,7 +98,7 @@ public abstract class OrientationHelper {
      *
      * @param view The view element to check
      * @return The last pixel of the element
-     * @see #getDecoratedStart(View)
+     * @see #getDecoratedStart(android.view.View)
      */
     public abstract int getDecoratedEnd(View view);
 

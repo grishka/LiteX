@@ -54,8 +54,6 @@ import androidx.viewpager2.R;
 import androidx.viewpager2.adapter.StatefulAdapter;
 
 import java.lang.annotation.Retention;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ViewPager2 replaces {@link androidx.viewpager.widget.ViewPager}, addressing most of its
@@ -132,18 +130,21 @@ public final class ViewPager2 extends ViewGroup {
                 @Override
                 public void onChanged() {
                     mCurrentItemDirty = true;
+                    mScrollEventAdapter.notifyDataSetChangeHappened();
                 }
             };
 
-    LinearLayoutManager mLayoutManager;
+    private LinearLayoutManager mLayoutManager;
     private int mPendingCurrentItem = NO_POSITION;
     private Parcelable mPendingAdapterState;
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
     private PagerSnapHelper mPagerSnapHelper;
-    private ScrollEventAdapter mScrollEventAdapter;
+    ScrollEventAdapter mScrollEventAdapter;
     private CompositeOnPageChangeCallback mPageChangeEventDispatcher;
     private FakeDrag mFakeDragger;
     private PageTransformerAdapter mPageTransformerAdapter;
+    private RecyclerView.ItemAnimator mSavedItemAnimator = null;
+    private boolean mSavedItemAnimatorPresent = false;
     private boolean mUserInputEnabled = true;
     private @OffscreenPageLimit int mOffscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT;
     AccessibilityProvider mAccessibilityProvider; // to avoid creation of a synthetic accessor
@@ -177,6 +178,7 @@ public final class ViewPager2 extends ViewGroup {
 
         mRecyclerView = new RecyclerViewImpl(context);
         mRecyclerView.setId(View.generateViewId());
+        mRecyclerView.setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
 
         mLayoutManager = new LinearLayoutManagerImpl(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -220,10 +222,22 @@ public final class ViewPager2 extends ViewGroup {
             }
         };
 
+        // Prevents focus from remaining on a no-longer visible page
+        final OnPageChangeCallback focusClearer = new OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                clearFocus();
+                if (hasFocus()) { // if clear focus did not succeed
+                    mRecyclerView.requestFocus(View.FOCUS_FORWARD);
+                }
+            }
+        };
+
         // Add currentItemUpdater before mExternalPageChangeCallbacks, because we need to update
         // internal state first
         mPageChangeEventDispatcher.addOnPageChangeCallback(currentItemUpdater);
-        // Allow a11y to register its listeners just after currentItemUpdater (so it has the
+        mPageChangeEventDispatcher.addOnPageChangeCallback(focusClearer);
+        // Allow a11y to register its listeners after currentItemUpdater (so it has the
         // right data). TODO: replace ordering comments with a test.
         mAccessibilityProvider.onInitialize(mPageChangeEventDispatcher, mRecyclerView);
         mPageChangeEventDispatcher.addOnPageChangeCallback(mExternalPageChangeCallbacks);
@@ -535,9 +549,10 @@ public final class ViewPager2 extends ViewGroup {
     }
 
     int getPageSize() {
+        final RecyclerView rv = mRecyclerView;
         return getOrientation() == ORIENTATION_HORIZONTAL
-                ? getWidth() - getPaddingLeft() - getPaddingRight()
-                : getHeight() - getPaddingTop() - getPaddingBottom();
+                ? rv.getWidth() - rv.getPaddingLeft() - rv.getPaddingRight()
+                : rv.getHeight() - rv.getPaddingTop() - rv.getPaddingBottom();
     }
 
     /**
@@ -831,6 +846,16 @@ public final class ViewPager2 extends ViewGroup {
         return mOffscreenPageLimit;
     }
 
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+        return mRecyclerView.canScrollHorizontally(direction);
+    }
+
+    @Override
+    public boolean canScrollVertically(int direction) {
+        return mRecyclerView.canScrollVertically(direction);
+    }
+
     /**
      * Add a callback that will be invoked whenever the page changes or is incrementally
      * scrolled. See {@link OnPageChangeCallback}.
@@ -857,6 +882,10 @@ public final class ViewPager2 extends ViewGroup {
      * Sets a {@link PageTransformer} that will be called for each attached page whenever the
      * scroll position is changed. This allows the application to apply custom property
      * transformations to each page, overriding the default sliding behavior.
+     * <p>
+     * Note: setting a {@link PageTransformer} disables data-set change animations to prevent
+     * conflicts between the two animation systems. Setting a {@code null} transformer will restore
+     * data-set change animations.
      *
      * @param transformer PageTransformer that will modify each page's animation properties
      *
@@ -864,6 +893,20 @@ public final class ViewPager2 extends ViewGroup {
      * @see CompositePageTransformer
      */
     public void setPageTransformer(@Nullable PageTransformer transformer) {
+        if (transformer != null) {
+            if (!mSavedItemAnimatorPresent) {
+                mSavedItemAnimator = mRecyclerView.getItemAnimator();
+                mSavedItemAnimatorPresent = true;
+            }
+            mRecyclerView.setItemAnimator(null);
+        } else {
+            if (mSavedItemAnimatorPresent) {
+                mRecyclerView.setItemAnimator(mSavedItemAnimator);
+                mSavedItemAnimator = null;
+                mSavedItemAnimatorPresent = false;
+            }
+        }
+
         // TODO: add support for reverseDrawingOrder: b/112892792
         // TODO: add support for pageLayerType: b/112893074
         if (transformer == mPageTransformerAdapter.getPageTransformer()) {
@@ -983,6 +1026,13 @@ public final class ViewPager2 extends ViewGroup {
             final int offscreenSpace = getPageSize() * pageLimit;
             extraLayoutSpace[0] = offscreenSpace;
             extraLayoutSpace[1] = offscreenSpace;
+        }
+
+        @Override
+        public boolean requestChildRectangleOnScreen(@NonNull RecyclerView parent,
+                @NonNull View child, @NonNull Rect rect, boolean immediate,
+                boolean focusedChildVisible) {
+            return false; // users should use setCurrentItem instead
         }
     }
 
@@ -1161,6 +1211,8 @@ public final class ViewPager2 extends ViewGroup {
         mRecyclerView.removeItemDecoration(decor);
     }
 
+    // TODO(b/141956012): Suppressed during upgrade to AGP 3.6.
+    @SuppressWarnings("ClassCanBeStatic")
     private abstract class AccessibilityProvider {
         void onInitialize(@NonNull CompositeOnPageChangeCallback pageChangeEventDispatcher,
                 @NonNull RecyclerView recyclerView) {

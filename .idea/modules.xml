@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/litex.iml" filepath="$PROJECT_DIR$/.idea/modules/litex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/browser/litex.browser.iml" filepath="$PROJECT_DIR$/.idea/modules/browser/litex.browser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/collection/litex.collection.iml" filepath="$PROJECT_DIR$/.idea/modules/collection/litex.collection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.iml" filepath="$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.iml" filepath="$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.iml" filepath="$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.iml" filepath="$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.iml" filepath="$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.iml" />
+    </modules>
+  </component>
+</project>

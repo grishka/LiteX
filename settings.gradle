@@ -1,7 +1,9 @@
-include ':annotation'
 include ':collection'
-include ':customtabs'
+include ':concurrent'
+
+include ':browser'
 include ':drawerlayout'
+include ':dynamicanimation'
 include ':recyclerview'
 include ':swiperefreshlayout'
 include ':viewpager'

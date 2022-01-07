@@ -32,7 +32,6 @@ import android.widget.ImageView;
 
 import androidx.swiperefreshlayout.R;
 
-
 /**
  * Private class created to work around issues with AnimationListeners being
  * called before the animation is actually complete and support shadows on older
@@ -41,17 +40,27 @@ import androidx.swiperefreshlayout.R;
 class CircleImageView extends ImageView {
 
     private static final int DEFAULT_BACKGROUND_COLOR = 0xFFFAFAFA;
+    private static final int FILL_SHADOW_COLOR = 0x3D000000;
+    private static final int KEY_SHADOW_COLOR = 0x1E000000;
 
     // PX
+    private static final float X_OFFSET = 0f;
+    private static final float Y_OFFSET = 1.75f;
+    private static final float SHADOW_RADIUS = 3.5f;
     private static final int SHADOW_ELEVATION = 4;
 
     private Animation.AnimationListener mListener;
+    private int mShadowRadius;
     private int mBackgroundColor;
 
     CircleImageView(Context context) {
         super(context);
 
         final float density = getContext().getResources().getDisplayMetrics().density;
+        final int shadowYOffset = (int) (density * Y_OFFSET);
+        final int shadowXOffset = (int) (density * X_OFFSET);
+
+        mShadowRadius = (int) (density * SHADOW_RADIUS);
 
         // The style attribute is named SwipeRefreshLayout instead of CircleImageView because
         // CircleImageView is not part of the public api.
@@ -63,10 +72,33 @@ class CircleImageView extends ImageView {
         colorArray.recycle();
 
         ShapeDrawable circle;
-        circle = new ShapeDrawable(new OvalShape());
-        setElevation(SHADOW_ELEVATION * density);
+        if (elevationSupported()) {
+            circle = new ShapeDrawable(new OvalShape());
+            setElevation(SHADOW_ELEVATION * density);
+        } else {
+            circle = new ShapeDrawable(new OvalShadow(this, mShadowRadius));
+            setLayerType(View.LAYER_TYPE_SOFTWARE, circle.getPaint());
+            circle.getPaint().setShadowLayer(mShadowRadius, shadowXOffset, shadowYOffset,
+                    KEY_SHADOW_COLOR);
+            final int padding = mShadowRadius;
+            // set padding so the inner image sits correctly within the shadow.
+            setPadding(padding, padding, padding, padding);
+        }
         circle.getPaint().setColor(mBackgroundColor);
         setBackground(circle);
+    }
+
+    private boolean elevationSupported() {
+        return android.os.Build.VERSION.SDK_INT >= 21;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (!elevationSupported()) {
+            setMeasuredDimension(getMeasuredWidth() + mShadowRadius * 2, getMeasuredHeight()
+                    + mShadowRadius * 2);
+        }
     }
 
     public void setAnimationListener(Animation.AnimationListener listener) {
@@ -99,5 +131,43 @@ class CircleImageView extends ImageView {
 
     public int getBackgroundColor() {
         return mBackgroundColor;
+    }
+
+    private static class OvalShadow extends OvalShape {
+        private Paint mShadowPaint;
+        private int mShadowRadius;
+        private CircleImageView mCircleImageView;
+
+        OvalShadow(CircleImageView circleImageView, int shadowRadius) {
+            super();
+            mCircleImageView = circleImageView;
+            mShadowPaint = new Paint();
+            mShadowRadius = shadowRadius;
+            updateRadialGradient((int) rect().width());
+        }
+
+        @Override
+        protected void onResize(float width, float height) {
+            super.onResize(width, height);
+            updateRadialGradient((int) width);
+        }
+
+        @Override
+        public void draw(Canvas canvas, Paint paint) {
+            final int x = mCircleImageView.getWidth() / 2;
+            final int y = mCircleImageView.getHeight() / 2;
+            canvas.drawCircle(x, y, x, mShadowPaint);
+            canvas.drawCircle(x, y, x - mShadowRadius, paint);
+        }
+
+        private void updateRadialGradient(int diameter) {
+            mShadowPaint.setShader(new RadialGradient(
+                    diameter / 2,
+                    diameter / 2,
+                    mShadowRadius,
+                    new int[]{FILL_SHADOW_COLOR, Color.TRANSPARENT},
+                    null,
+                    Shader.TileMode.CLAMP));
+        }
     }
 }

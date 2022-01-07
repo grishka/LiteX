@@ -45,8 +45,8 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * Align child view's left or top with parent view's left or top
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(View, int)
-     * @see #calculateDyToMakeVisible(View, int)
+     * @see #calculateDxToMakeVisible(android.view.View, int)
+     * @see #calculateDyToMakeVisible(android.view.View, int)
      */
     public static final int SNAP_TO_START = -1;
 
@@ -54,8 +54,8 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * Align child view's right or bottom with parent view's right or bottom
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(View, int)
-     * @see #calculateDyToMakeVisible(View, int)
+     * @see #calculateDxToMakeVisible(android.view.View, int)
+     * @see #calculateDyToMakeVisible(android.view.View, int)
      */
     public static final int SNAP_TO_END = 1;
 
@@ -66,8 +66,8 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      * {@code SNAP_TO_ANY} is the same as using {@code SNAP_TO_START}</p>
      *
      * @see #calculateDtToFit(int, int, int, int, int)
-     * @see #calculateDxToMakeVisible(View, int)
-     * @see #calculateDyToMakeVisible(View, int)
+     * @see #calculateDxToMakeVisible(android.view.View, int)
+     * @see #calculateDyToMakeVisible(android.view.View, int)
      */
     public static final int SNAP_TO_ANY = 0;
 
@@ -130,7 +130,7 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
         }
         //noinspection PointlessBooleanExpression
         if (DEBUG && mTargetVector != null
-                && ((mTargetVector.x * dx < 0 || mTargetVector.y * dy < 0))) {
+                && (mTargetVector.x * dx < 0 || mTargetVector.y * dy < 0)) {
             throw new IllegalStateException("Scroll happened in the opposite direction"
                     + " of the target. Some calculations are wrong");
         }
@@ -196,7 +196,7 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
      *
      * @param dx Distance in pixels that we want to scroll
      * @return Time in milliseconds
-     * @see #calculateSpeedPerPixel(DisplayMetrics)
+     * @see #calculateSpeedPerPixel(android.util.DisplayMetrics)
      */
     protected int calculateTimeForScrolling(int dx) {
         // In a case where dx is very small, rounding may return 0 although dx > 0.
@@ -272,8 +272,8 @@ public class LinearSmoothScroller extends RecyclerView.SmoothScroller {
     }
 
     /**
-     * Helper method for {@link #calculateDxToMakeVisible(View, int)} and
-     * {@link #calculateDyToMakeVisible(View, int)}
+     * Helper method for {@link #calculateDxToMakeVisible(android.view.View, int)} and
+     * {@link #calculateDyToMakeVisible(android.view.View, int)}
      */
     public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int
             snapPreference) {

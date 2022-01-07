@@ -1,0 +1,23 @@
+apply plugin: 'com.android.library'
+apply from: '../maven-push.gradle'
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "32.0.0"
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 31
+    }
+    buildFeatures {
+        aidl = true
+    }
+}
+
+dependencies {
+    api("androidx.annotation:annotation:1.3.0")
+
+    implementation project(":collection")
+    implementation project(":concurrent")
+}
+
+version = '1.4.0'

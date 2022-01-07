@@ -153,7 +153,6 @@ public class DrawerLayout extends ViewGroup {
 
 
     private static final int MIN_DRAWER_MARGIN = 64; // dp
-    private static final int DRAWER_ELEVATION = 10; //dp
 
     private static final int DEFAULT_SCRIM_COLOR = 0x99000000;
 
@@ -244,6 +243,18 @@ public class DrawerLayout extends ViewGroup {
     private Matrix mChildInvertedMatrix;
 
     private static boolean sEdgeSizeUsingSystemGestureInsets = Build.VERSION.SDK_INT >= 29;
+
+//    private final AccessibilityViewCommand mActionDismiss =
+//            new AccessibilityViewCommand() {
+//                @Override
+//                public boolean perform(@NonNull View view, @Nullable CommandArguments arguments) {
+//                    if (isDrawerOpen(view)  && getDrawerLockMode(view) != LOCK_MODE_LOCKED_OPEN) {
+//                        closeDrawer(view);
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            };
 
     /**
      * Listener for monitoring events about drawers.
@@ -869,6 +880,7 @@ public class DrawerLayout extends ViewGroup {
             }
 
             updateChildrenImportantForAccessibility(drawerView, false);
+//            updateChildAccessibilityAction(drawerView);
 
             // Only send WINDOW_STATE_CHANGE if the host has window focus. This
             // may change if support for multiple foreground windows (e.g. IME)
@@ -896,6 +908,7 @@ public class DrawerLayout extends ViewGroup {
             }
 
             updateChildrenImportantForAccessibility(drawerView, true);
+//            updateChildAccessibilityAction(drawerView);
 
             // Only send WINDOW_STATE_CHANGE if the host has window focus.
             if (hasWindowFocus()) {
@@ -917,6 +930,13 @@ public class DrawerLayout extends ViewGroup {
             }
         }
     }
+
+//    private void updateChildAccessibilityAction(View child) {
+//        ViewCompat.removeAccessibilityAction(child, ACTION_DISMISS.getId());
+//        if (isDrawerOpen(child)  && getDrawerLockMode(child) != LOCK_MODE_LOCKED_OPEN) {
+//            ViewCompat.replaceAccessibilityAction(child, ACTION_DISMISS, null, mActionDismiss);
+//        }
+//    }
 
     void dispatchOnDrawerSlide(View drawerView, float slideOffset) {
         if (mListeners != null) {
@@ -1679,6 +1699,14 @@ public class DrawerLayout extends ViewGroup {
     }
 
     /**
+     * Open the {@link Gravity#START} drawer by animating it into view.
+     */
+//    @Override
+    public void open() {
+        openDrawer(Gravity.START);
+    }
+
+    /**
      * Open the specified drawer view by animating it into view.
      *
      * @param drawerView Drawer view to open
@@ -1704,6 +1732,7 @@ public class DrawerLayout extends ViewGroup {
             lp.openState = LayoutParams.FLAG_IS_OPENED;
 
             updateChildrenImportantForAccessibility(drawerView, true);
+//            updateChildAccessibilityAction(drawerView);
         } else if (animate) {
             lp.openState |= LayoutParams.FLAG_IS_OPENING;
 
@@ -1725,7 +1754,7 @@ public class DrawerLayout extends ViewGroup {
      * Open the specified drawer by animating it out of view.
      *
      * @param gravity Gravity.LEFT to move the left drawer or Gravity.RIGHT for the right.
-     *                Gravity.START or Gravity.END may also be used.
+     *                GravityCompat.START or GravityCompat.END may also be used.
      */
     public void openDrawer(@EdgeGravity int gravity) {
         openDrawer(gravity, true);
@@ -1735,7 +1764,7 @@ public class DrawerLayout extends ViewGroup {
      * Open the specified drawer.
      *
      * @param gravity Gravity.LEFT to move the left drawer or Gravity.RIGHT for the right.
-     *                Gravity.START or Gravity.END may also be used.
+     *                GravityCompat.START or GravityCompat.END may also be used.
      * @param animate Whether opening of the drawer should be animated.
      */
     public void openDrawer(@EdgeGravity int gravity, boolean animate) {
@@ -1745,6 +1774,14 @@ public class DrawerLayout extends ViewGroup {
                     + gravityToString(gravity));
         }
         openDrawer(drawerView, animate);
+    }
+
+    /**
+     * Close the {@link Gravity#START} drawer by animating it out of view.
+     */
+//    @Override
+    public void close() {
+        closeDrawer(Gravity.START);
     }
 
     /**
@@ -1792,7 +1829,7 @@ public class DrawerLayout extends ViewGroup {
      * Close the specified drawer by animating it out of view.
      *
      * @param gravity Gravity.LEFT to move the left drawer or Gravity.RIGHT for the right.
-     *                Gravity.START or Gravity.END may also be used.
+     *                GravityCompat.START or GravityCompat.END may also be used.
      */
     public void closeDrawer(@EdgeGravity int gravity) {
         closeDrawer(gravity, true);
@@ -1802,7 +1839,7 @@ public class DrawerLayout extends ViewGroup {
      * Close the specified drawer.
      *
      * @param gravity Gravity.LEFT to move the left drawer or Gravity.RIGHT for the right.
-     *                Gravity.START or Gravity.END may also be used.
+     *                GravityCompat.START or GravityCompat.END may also be used.
      * @param animate Whether closing of the drawer should be animated.
      */
     public void closeDrawer(@EdgeGravity int gravity, boolean animate) {
@@ -1830,6 +1867,19 @@ public class DrawerLayout extends ViewGroup {
         }
         LayoutParams drawerLp = (LayoutParams) drawer.getLayoutParams();
         return (drawerLp.openState & LayoutParams.FLAG_IS_OPENED) == 1;
+    }
+
+    /**
+     * Check if the {@link Gravity#START} drawer is currently in an open state.
+     * To be considered "open" the drawer must have settled into its fully
+     * visible state. If there is no drawer with the given gravity this method
+     * will return false.
+     *
+     * @return true if the {@link Gravity#START} drawer is in an open state
+     */
+//    @Override
+    public boolean isOpen() {
+        return isDrawerOpen(Gravity.START);
     }
 
     /**
@@ -2441,7 +2491,7 @@ public class DrawerLayout extends ViewGroup {
         }
 
         /**
-         * This should really be in AccessibilityNodeInfo, but there unfortunately
+         * This should really be in AccessibilityNodeInfoCompat, but there unfortunately
          * seem to be a few elements that are not easily cloneable using the underlying API.
          * Leave it private here as it's not general-purpose useful.
          */
@@ -2466,7 +2516,7 @@ public class DrawerLayout extends ViewGroup {
         }
     }
 
-    static final class ChildAccessibilityDelegate extends AccessibilityDelegate {
+    static final class ChildAccessibilityDelegate extends View.AccessibilityDelegate {
         @Override
         public void onInitializeAccessibilityNodeInfo(View child,
                 AccessibilityNodeInfo info) {

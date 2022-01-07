@@ -32,7 +32,7 @@ interface ThreadUtil<T> {
         void refresh(int generation);
 
         void updateRange(int rangeStart, int rangeEnd, int extRangeStart, int extRangeEnd,
-						 int scrollHint);
+                         int scrollHint);
 
         void loadTile(int position, int scrollHint);
 

@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
@@ -169,7 +170,10 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     private OnChildScrollUpCallback mChildScrollUpCallback;
 
-    private AnimationListener mRefreshListener = new AnimationListener() {
+    /** @see #setLegacyRequestDisallowInterceptTouchEventEnabled */
+    private boolean mEnableLegacyRequestDisallowInterceptTouch;
+
+    private Animation.AnimationListener mRefreshListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
         }
@@ -218,7 +222,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     }
 
-    static class SavedState extends BaseSavedState {
+    static class SavedState extends View.BaseSavedState {
         final boolean mRefreshing;
 
         /**
@@ -243,12 +247,14 @@ public class SwipeRefreshLayout extends ViewGroup {
             out.writeByte(mRefreshing ? (byte) 1 : (byte) 0);
         }
 
-        public static final Creator<SavedState> CREATOR =
-                new Creator<SavedState>() {
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    @Override
                     public SavedState createFromParcel(Parcel in) {
                         return new SavedState(in);
                     }
 
+                    @Override
                     public SavedState[] newArray(int size) {
                         return new SavedState[size];
                     }
@@ -343,12 +349,11 @@ public class SwipeRefreshLayout extends ViewGroup {
     }
 
     /**
-     * Sets a custom slingshot distance.
+     * Sets the distance that the refresh indicator can be pulled beyond its resting position during
+     * a swipe gesture. The default is {@link #DEFAULT_SLINGSHOT_DISTANCE}.
      *
      * @param slingshotDistance The distance in pixels that the refresh indicator can be pulled
-     *                          beyond its resting position. Use
-     *                          {@link #DEFAULT_SLINGSHOT_DISTANCE} to reset to the default value.
-     *
+     *                          beyond its resting position.
      */
     public void setSlingshotDistance(@Px int slingshotDistance) {
         mCustomSlingshotDistance = slingshotDistance;
@@ -515,7 +520,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     }
 
-    void startScaleDownAnimation(AnimationListener listener) {
+    void startScaleDownAnimation(Animation.AnimationListener listener) {
         mScaleDownAnimation = new Animation() {
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -786,6 +791,32 @@ public class SwipeRefreshLayout extends ViewGroup {
         return mIsBeingDragged;
     }
 
+    /**
+     * Enables the legacy behavior of {@link #requestDisallowInterceptTouchEvent} from before
+     * 1.1.0-alpha03, where the request is not propagated up to its parents in either of the
+     * following two cases:
+     * <ul>
+     *     <li>The child as an {@link AbsListView} and the runtime is API < 21</li>
+     *     <li>The child has nested scrolling disabled</li>
+     * </ul>
+     * Use this method <em>only</em> if your application:
+     * <ul>
+     *     <li>is upgrading SwipeRefreshLayout from &lt; 1.1.0-alpha03 to &gt;= 1.1.0-alpha03</li>
+     *     <li>relies on a parent of SwipeRefreshLayout to intercept touch events and that
+     *     parent no longer responds to touch events</li>
+     *     <li>setting this method to {@code true} fixes that issue</li>
+     * </ul>
+     *
+     * @param enabled {@code true} to enable the legacy behavior, {@code false} for default behavior
+     * @deprecated Only use this method if the changes introduced in
+     *             {@link #requestDisallowInterceptTouchEvent} in version 1.1.0-alpha03 are breaking
+     *             your application.
+     */
+    @Deprecated
+    public void setLegacyRequestDisallowInterceptTouchEventEnabled(boolean enabled) {
+        mEnableLegacyRequestDisallowInterceptTouch = enabled;
+    }
+
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
         // if this is a List < L or another view that doesn't support nested
@@ -793,7 +824,15 @@ public class SwipeRefreshLayout extends ViewGroup {
         // isn't stolen
         if ((android.os.Build.VERSION.SDK_INT < 21 && mTarget instanceof AbsListView)
                 || (mTarget != null && !mTarget.isNestedScrollingEnabled())) {
-            // Nope.
+            if (mEnableLegacyRequestDisallowInterceptTouch) {
+                // Nope.
+            } else {
+                // Ignore here, but pass it up to our parent
+                ViewParent parent = getParent();
+                if (parent != null) {
+                    parent.requestDisallowInterceptTouchEvent(b);
+                }
+            }
         } else {
             super.requestDisallowInterceptTouchEvent(b);
         }
@@ -805,6 +844,10 @@ public class SwipeRefreshLayout extends ViewGroup {
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed,
             int dxUnconsumed, int dyUnconsumed,
             @NonNull int[] consumed) {
+//        if (type != ViewCompat.TYPE_TOUCH) {
+//            return;
+//        }
+
         // This is a bit of a hack. onNestedScroll is typically called up the hierarchy of nested
         // scrolling parents/children, where each consumes distances before passing the remainder
         // to parents.  In our case, we want to try to run after children, and after parents, so we
@@ -845,6 +888,51 @@ public class SwipeRefreshLayout extends ViewGroup {
         }
     }
 
+    // NestedScrollingParent 2
+/*
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int axes, int type) {
+        if (type == ViewCompat.TYPE_TOUCH) {
+            return onStartNestedScroll(child, target, axes);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int axes, int type) {
+        // Should always be true because onStartNestedScroll returns false for all type !=
+        // ViewCompat.TYPE_TOUCH, but check just in case.
+        if (type == ViewCompat.TYPE_TOUCH) {
+            onNestedScrollAccepted(child, target, axes);
+        }
+    }
+
+    @Override
+    public void onStopNestedScroll(View target, int type) {
+        // Should always be true because onStartNestedScroll returns false for all type !=
+        // ViewCompat.TYPE_TOUCH, but check just in case.
+        if (type == ViewCompat.TYPE_TOUCH) {
+            onStopNestedScroll(target);
+        }
+    }
+
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
+            int dyUnconsumed, int type) {
+        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type,
+                mNestedScrollingV2ConsumedCompat);
+    }
+
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed, int type) {
+        // Should always be true because onStartNestedScroll returns false for all type !=
+        // ViewCompat.TYPE_TOUCH, but check just in case.
+        if (type == ViewCompat.TYPE_TOUCH) {
+            onNestedPreScroll(target, dx, dy, consumed);
+        }
+    }
+*/
     // NestedScrollingParent 1
 
     @Override
@@ -932,6 +1020,51 @@ public class SwipeRefreshLayout extends ViewGroup {
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
+    // NestedScrollingChild 3
+/*
+    @Override
+    public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
+            int dyUnconsumed, @Nullable int[] offsetInWindow, @ViewCompat.NestedScrollType int type,
+            @NonNull int[] consumed) {
+        if (type == ViewCompat.TYPE_TOUCH) {
+            mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed,
+                    dyUnconsumed, offsetInWindow, type, consumed);
+        }
+    }
+
+    // NestedScrollingChild 2
+
+    @Override
+    public boolean startNestedScroll(int axes, int type) {
+        return type == ViewCompat.TYPE_TOUCH && startNestedScroll(axes);
+    }
+
+    @Override
+    public void stopNestedScroll(int type) {
+        if (type == ViewCompat.TYPE_TOUCH) {
+            stopNestedScroll();
+        }
+    }
+
+    @Override
+    public boolean hasNestedScrollingParent(int type) {
+        return type == ViewCompat.TYPE_TOUCH && hasNestedScrollingParent();
+    }
+
+    @Override
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
+            int dyUnconsumed, int[] offsetInWindow, int type) {
+        return type == ViewCompat.TYPE_TOUCH && mNestedScrollingChildHelper.dispatchNestedScroll(
+                dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type);
+    }
+
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow,
+            int type) {
+        return type == ViewCompat.TYPE_TOUCH && dispatchNestedPreScroll(dx, dy, consumed,
+                offsetInWindow);
+    }
+*/
     // NestedScrollingChild 1
 /*
     @Override
@@ -1002,7 +1135,7 @@ public class SwipeRefreshLayout extends ViewGroup {
                 / slingshotDist);
         float tensionPercent = (float) ((tensionSlingshotPercent / 4) - Math.pow(
                 (tensionSlingshotPercent / 4), 2)) * 2f;
-        float extraMove = (slingshotDist) * tensionPercent * 2;
+        float extraMove = slingshotDist * tensionPercent * 2;
 
         int targetY = mOriginalOffsetTop + (int) ((slingshotDist * dragPercent) + extraMove);
         // where 1.0f is a full circle
@@ -1045,9 +1178,9 @@ public class SwipeRefreshLayout extends ViewGroup {
             // cancel refresh
             mRefreshing = false;
             mProgress.setStartEndTrim(0f, 0f);
-            AnimationListener listener = null;
+            Animation.AnimationListener listener = null;
             if (!mScale) {
-                listener = new AnimationListener() {
+                listener = new Animation.AnimationListener() {
 
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -1194,14 +1327,13 @@ public class SwipeRefreshLayout extends ViewGroup {
     private final Animation mAnimateToCorrectPosition = new Animation() {
         @Override
         public void applyTransformation(float interpolatedTime, Transformation t) {
-            int targetTop = 0;
-            int endTarget = 0;
+            int endTarget;
             if (!mUsingCustomStart) {
                 endTarget = mSpinnerOffsetEnd - Math.abs(mOriginalOffsetTop);
             } else {
                 endTarget = mSpinnerOffsetEnd;
             }
-            targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
+            int targetTop = (mFrom + (int) ((endTarget - mFrom) * interpolatedTime));
             int offset = targetTop - mCircleView.getTop();
             setTargetOffsetTopAndBottom(offset);
             mProgress.setArrowScale(1 - interpolatedTime);
@@ -1209,8 +1341,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     };
 
     void moveToStart(float interpolatedTime) {
-        int targetTop = 0;
-        targetTop = (mFrom + (int) ((mOriginalOffsetTop - mFrom) * interpolatedTime));
+        int targetTop = (mFrom + (int) ((mOriginalOffsetTop - mFrom) * interpolatedTime));
         int offset = targetTop - mCircleView.getTop();
         setTargetOffsetTopAndBottom(offset);
     }
@@ -1223,7 +1354,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     };
 
     private void startScaleDownReturnToStartAnimation(int from,
-            AnimationListener listener) {
+            Animation.AnimationListener listener) {
         mFrom = from;
         mStartingScale = mCircleView.getScaleX();
         mScaleDownToStartAnimation = new Animation() {
@@ -1244,10 +1375,8 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     void setTargetOffsetTopAndBottom(int offset) {
         mCircleView.bringToFront();
-        //ViewCompat.offsetTopAndBottom(mCircleView, offset);
-        mCircleView.setTranslationY(offset);
-//        mCurrentTargetOffsetTop = mCircleView.getTop();
-		mCurrentTargetOffsetTop=(int)mCircleView.getY();
+        mCircleView.offsetTopAndBottom(offset);
+        mCurrentTargetOffsetTop = mCircleView.getTop();
     }
 
     private void onSecondaryPointerUp(MotionEvent ev) {
