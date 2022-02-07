@@ -5493,7 +5493,7 @@ public class RecyclerView extends ViewGroup {
                 // Nested Post Scroll
                 mReusableIntPair[0] = 0;
                 mReusableIntPair[1] = 0;
-//                dispatchNestedScroll(consumedX, consumedY, unconsumedX, unconsumedY, null, TYPE_NON_TOUCH, mReusableIntPair);
+                dispatchNestedScroll(consumedX, consumedY, unconsumedX, unconsumedY, null/*, TYPE_NON_TOUCH, mReusableIntPair*/);
                 unconsumedX -= mReusableIntPair[0];
                 unconsumedY -= mReusableIntPair[1];
 
@@ -5531,7 +5531,21 @@ public class RecyclerView extends ViewGroup {
                         final int vel = (int) scroller.getCurrVelocity();
                         int velX = unconsumedX < 0 ? -vel : unconsumedX > 0 ? vel : 0;
                         int velY = unconsumedY < 0 ? -vel : unconsumedY > 0 ? vel : 0;
-                        absorbGlows(velX, velY);
+                        final boolean canScrollHorizontal = mLayout.canScrollHorizontally();
+                        final boolean canScrollVertical = mLayout.canScrollVertically();
+                        int nestedScrollAxis = SCROLL_AXIS_NONE;
+                        if (canScrollHorizontal) {
+                            nestedScrollAxis |= SCROLL_AXIS_HORIZONTAL;
+                        }
+                        if (canScrollVertical) {
+                            nestedScrollAxis |= SCROLL_AXIS_VERTICAL;
+                        }
+                        if(!startNestedScroll(nestedScrollAxis) || !dispatchNestedPreFling(velX, velY)){
+                            absorbGlows(velX, velY);
+                        }else{
+                            cancelScroll();
+                            stop();
+                        }
                     }
 
                     if (ALLOW_THREAD_GAP_WORK) {
