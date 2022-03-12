@@ -885,6 +885,8 @@ public class SwipeRefreshLayout extends ViewGroup {
             // If we've gotten here, we need to consume whatever is left to consume, which at this
             // point is either equal to 0, or remainingDistanceToScroll.
             consumed[1] += unconsumedAfterParents;
+            if(mNestedScrollInProgress)
+                mTarget.getParent().requestDisallowInterceptTouchEvent(true);
         }
     }
 
@@ -997,6 +999,8 @@ public class SwipeRefreshLayout extends ViewGroup {
         if (mTotalUnconsumed > 0) {
             finishSpinner(mTotalUnconsumed);
             mTotalUnconsumed = 0;
+        } else if (mCircleView.getVisibility() == View.VISIBLE) {
+            mCircleView.setVisibility(View.GONE);
         }
         // Dispatch up our nested parent
         stopNestedScroll();
