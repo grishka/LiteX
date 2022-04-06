@@ -12721,7 +12721,7 @@ public class RecyclerView extends ViewGroup {
          * called by CREATOR
          */
         SavedState(Parcel in, ClassLoader loader) {
-            super(in, loader);
+            super(in);
             mLayoutState = in.readParcelable(
                     loader != null ? loader : LayoutManager.class.getClassLoader());
         }
