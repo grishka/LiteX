@@ -4,14 +4,45 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/litex.iml" filepath="$PROJECT_DIR$/.idea/modules/litex.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/browser/litex.browser.iml" filepath="$PROJECT_DIR$/.idea/modules/browser/litex.browser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/browser/litex.browser.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/browser/litex.browser.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/browser/litex.browser.main.iml" filepath="$PROJECT_DIR$/.idea/modules/browser/litex.browser.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/browser/litex.browser.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/browser/litex.browser.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/collection/litex.collection.iml" filepath="$PROJECT_DIR$/.idea/modules/collection/litex.collection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/collection/litex.collection.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/collection/litex.collection.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/collection/litex.collection.main.iml" filepath="$PROJECT_DIR$/.idea/modules/collection/litex.collection.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/collection/litex.collection.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/collection/litex.collection.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.iml" filepath="$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/concurrent/litex.concurrent.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.iml" filepath="$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.main.iml" filepath="$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/drawerlayout/litex.drawerlayout.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.iml" filepath="$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/dynamicanimation/litex.dynamicanimation.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/palette/litex.palette.iml" filepath="$PROJECT_DIR$/.idea/modules/palette/litex.palette.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/palette/litex.palette.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/palette/litex.palette.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/palette/litex.palette.main.iml" filepath="$PROJECT_DIR$/.idea/modules/palette/litex.palette.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/palette/litex.palette.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/palette/litex.palette.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.iml" filepath="$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.main.iml" filepath="$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/recyclerview/litex.recyclerview.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.iml" filepath="$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.main.iml" filepath="$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/swiperefreshlayout/litex.swiperefreshlayout.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.main.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager/litex.viewpager.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.main.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/viewpager2/litex.viewpager2.unitTest.iml" />
     </modules>
   </component>
 </project>
