@@ -13,6 +13,7 @@ You no longer need the AppCompat library when you target API 21 or higher becaus
 * [swiperefreshlayout](https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout) 1.1.0
 * [viewpager](https://developer.android.com/jetpack/androidx/releases/viewpager) 1.0.0
 * [viewpager2](https://developer.android.com/jetpack/androidx/releases/viewpager2) 1.0.0
+* [palette](https://developer.android.com/jetpack/androidx/releases/palette) 1.0.0
 
 ### Differences from AndroidX
 
