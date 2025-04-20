@@ -1392,7 +1392,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     }
 
     void setTargetOffsetTopAndBottom(int offset) {
-        mCircleView.bringToFront();
+//        mCircleView.bringToFront(); // Should not be necessary because the elevation takes care of this anyway
         mCircleView.offsetTopAndBottom(offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
     }
