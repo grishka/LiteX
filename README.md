@@ -7,7 +7,7 @@ You no longer need the AppCompat library when you target API 21 or higher becaus
 * [browser](https://developer.android.com/jetpack/androidx/releases/browser) 1.4.0
 * [collection](https://developer.android.com/jetpack/androidx/releases/collection) 1.1.0
 * [concurrent](https://developer.android.com/jetpack/androidx/releases/concurrent) 1.1.0
-* [drawerlayout](https://developer.android.com/jetpack/androidx/releases/drawerlayout) 1.1.1
+* [drawerlayout](https://developer.android.com/jetpack/androidx/releases/drawerlayout) 1.2.0
 * [dynamicanimation](https://developer.android.com/jetpack/androidx/releases/dynamicanimation) 1.1.0-alpha03
 * [recyclerview](https://developer.android.com/jetpack/androidx/releases/recyclerview) 1.2.1
 * [swiperefreshlayout](https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout) 1.2.0-beta01
