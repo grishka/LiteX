@@ -7,12 +7,12 @@ def isReleaseBuild() {
 
 def getReleaseRepositoryUrl() {
     return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
-            : "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            : "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 }
 
 def getSnapshotRepositoryUrl() {
     return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
-            : "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            : "https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/"
 }
 
 def getRepositoryUsername() {
@@ -31,15 +31,7 @@ def getSigningKey(){
     return hasProperty("mavenGpgKey") ? mavenGpgKey: ""
 }
 
-configurations {
-    javadocApi
-}
-
 afterEvaluate { project ->
-
-    dependencies {
-        javadocApi("androidx.annotation:annotation:1.3.0")
-    }
 
     task androidSourcesJar(type: Jar) {
         classifier = 'sources'
@@ -48,7 +40,7 @@ afterEvaluate { project ->
 
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
-        from "/dev/null"
+        from android.sourceSets.main.java.sourceFiles
     }
 
     publishing {
@@ -98,5 +90,13 @@ afterEvaluate { project ->
 
     signing {
         sign publishing.publications.release
+    }
+
+        publishReleasePublicationToMavenRepository.doLast {
+        def req=new URL("https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/me.grishka").openConnection()
+        req.setRequestMethod("POST")
+        req.setRequestProperty("Authorization", "Bearer "+Base64.encoder.encodeToString((getRepositoryUsername()+":"+getRepositoryPassword()).getBytes("UTF-8")))
+        def respCode=req.getResponseCode()
+        println 'Request result '+respCode
     }
 }

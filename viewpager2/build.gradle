@@ -14,7 +14,6 @@ dependencies {
 	api("androidx.annotation:annotation:1.3.0")
 	api project(':recyclerview')
 	implementation project(':collection')
-	javadocApi("androidx.recyclerview:recyclerview:1.2.1")
 }
 
 version = '1.0.0'
